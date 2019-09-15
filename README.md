@@ -24,16 +24,20 @@ http {
         access_by_lua_block {
           local access = require'resty.access'
           local site = access:new()
+          
           #Add users one by one who can access this location. To pass authentication provide "username".
           site:permitUser({username="john", email="eldar.beybutov@gmail.com"})
-          You can also permit a single email.
-          #site:permitEmail({email = "john@snow.winter"})
+          
+          #You can also permit a single email.
+          site:permitEmail({email = "john@snow.winter"})
+          
           #Or you can permit the whole domain. "*" - works as wildcard here.
           site:permitEmail({email = "*@snow.winter"})
+          
           #Launch Authentication module
           site:protect()
           }
-          proxy_pass http://domain2.local;
+       proxy_pass http://domain2.local;
      }
    }
   }
