@@ -48,7 +48,7 @@ If you want to change access time and persistence or cookie name prefix you can 
 site:sessionConfig({cookie_prefix = "luarestyaccess_", access_persistent = false , access_time = 3600})
 ```
 
-If you want to process emails through your own smtp server you can use emailConfig method
+If you want to process emails through your own smtp server you can use emailConfig method.
 ```shell
 site:emailConfig({
   mode = "smtp", 
