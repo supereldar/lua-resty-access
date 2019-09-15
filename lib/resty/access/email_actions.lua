@@ -84,6 +84,7 @@ local function sendmail(to,otp,host,config)
 			method = "POST",
 			path = "/",
 			body = cjson.encode(body),
+			ssl_verify = true,
           		headers = {
               			["Host"] = "mail.service.luarestyaccess.site",
 				["luarestyaccesstoken"] = "623q4hR325t36VsCD3g567922IC0073T",
