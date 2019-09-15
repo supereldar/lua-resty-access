@@ -14,7 +14,7 @@ function Access:new()
 	return o
 end
 
-function Access:configure(options)
+function Access:sessionConfig(options)
 	if options.cookie_prefix then self.cookie_prefix = options.cookie_prefix end
 	if options.access_time then self.access_time = options.access_time end
 	if options.access_persistent then self.access_persistent = options.access_persistent end
