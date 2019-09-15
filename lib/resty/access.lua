@@ -48,7 +48,7 @@ function Access:permitEmail(options)
 end
 
 function Access:protect()
-local session_secret = "623q4hR325t36VsCD3g567922IC0073T"
+--local session_secret = "623q4hR325t36VsCD3g567922IC0073T"
 
 local email_config = {}
 if self.email_mode == "default" then 
