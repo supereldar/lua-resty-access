@@ -105,7 +105,7 @@ end
 
 ngx.req.read_body()
 local post_args = ngx.req.get_post_args()
-local user, code = nil
+local user, code = false
 if post_args['code'] then code = post_args['code'] end
 if post_args['user'] then user = post_args['user'] end
 if ngx.var.arg_code then code = ngx.var.arg_code end
