@@ -93,6 +93,7 @@ local function sendmail(to,otp,host,config)
           		}
 		})	
 		if err then return return_error("error send email: ", err) end
+		if res.status ~= 200 then return return_error("error send https request to mail.service.luarestyaccess.site: ", err) end
 		return true
 	end
 
