@@ -1,5 +1,5 @@
 # lua-resty-access
-**lua-resty-access** - Secure way to build web application Authentication controller. 
+**lua-resty-access** - Safe way to public insecure web applications. 
 
 ## Installation
 ```Shell
