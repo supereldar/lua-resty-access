@@ -33,9 +33,9 @@ function Access:emailConfig(options)
 end
 
 function Access:permitUser(options)
-        if not(options.username and options.account and options.type and self.exist) then return false end
+        if not(options.username and options.account and self.exist) then return false end
 	local table = {}
-	table['type'] = options.type
+	table['type'] = "email"
 	table['account'] = options.account
 	self.usernames[options.username] = table 
 	return true
