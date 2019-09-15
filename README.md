@@ -17,7 +17,7 @@ http {
     servername domain.local;
     
       location / {
-        #REQUIREMENT: resolver and ca certificate directives are needed for external communication.
+#REQUIREMENT: resolver and ca certificate directives are needed for external communication.
         resolver 8.8.8.8;
         lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
         
