@@ -1,5 +1,5 @@
 # lua-resty-access
-**lua-resty-access** - Authentication controller. 
+**lua-resty-access** - Secure way to build web application Authentication controller. 
 
 ## Installation
 ```Shell
@@ -9,7 +9,7 @@ $ opm get supereldar/lua-resty-access
 Your nginx configuration should look like this 
 ```nginx
 http {
-#REQUIREMENT: module require storage, please setup luarestyaccess dictionary.
+#REQUIREMENT: module require temporary storage, please setup luarestyaccess dictionary.
   lua_shared_dict luarestyaccess 10m;
   
     server {
