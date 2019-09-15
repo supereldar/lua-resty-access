@@ -163,7 +163,7 @@ authen_session:open()
 if code and authen_session.data.otp then
 	local users = ngx.shared.luarestyaccess
 	local user,attempts = users:get(authen_session.data.id)
-	local location = user['location'] or "/"
+	local location = authen_session.data.location or "/"
 	if attempts == nil then attempts = 0 end
 	if attempts >= 3 then
 		Response({lastuser = user})
@@ -178,8 +178,8 @@ if code and authen_session.data.otp then
 		names_session:start()
 			names_session.data.user = authen_session.data.user
 		names_session:save()
-		ngx.redirect(authen_session.data.location) 
 		authen_session:destroy()
+		ngx.redirect(location) 
 	else
 		users:set(authen_session.data.id,user,users:ttl(authen_session.data.id),attempts+1) 
 		if attempts + 1 == 3 then
