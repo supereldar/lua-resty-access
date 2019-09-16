@@ -22,7 +22,7 @@ http {
 #REQUIREMENT: resolver and ca certificate directives are needed for external communication.
         resolver 8.8.8.8;
         lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
-#REQUIREMENT: Call method protect of resty.access class using access_by_lua* directive to activate access managment.
+#REQUIREMENT: Call method protect of resty.access class using access_by_lua* to activate access managment.
         access_by_lua_block {
           local access = require'resty.access'
           local site = access:new()
@@ -38,11 +38,11 @@ http {
           
           #Launch Authentication module
           site:protect()
-          }
+         }
        proxy_pass http://domain2.local;
      }
    }
-  }
+ }
  ``` 
 ## Optional configuration
 If you want to change access time and persistence or cookie name prefix you can use sessionConfig method.
