@@ -42,8 +42,8 @@ http {
        proxy_pass http://domain2.local;
      }
    }
- }
- ``` 
+}
+``` 
 ## Optional configuration
 If you want to change access time and persistence or cookie name prefix you can use sessionConfig method.
 ```shell
