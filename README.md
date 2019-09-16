@@ -1,5 +1,5 @@
 # lua-resty-access
-**lua-resty-access** - Safe way to public insecure web applications.
+**lua-resty-access** - Web application access management based on passwordless authentication.
 
 **Live Demo on** https://luarestyaccess.site
 
