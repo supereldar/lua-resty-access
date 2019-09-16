@@ -112,6 +112,7 @@ if post_args['luarestyaccess'] then check = true end
 
 if check then
         ngx.say(cjson.encode({luarestyaccess = "luarestyaccess"}))
+	ngx.exit(200)
 end
 	
 names_session:open()
