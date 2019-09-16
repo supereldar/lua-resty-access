@@ -132,7 +132,7 @@ if user then
 			pattern = pattern:gsub("([%^%$%(%)%.%[%]%+%-%?])", "%%%1")
 			pattern = pattern:gsub("%*", ".*")
 			pattern = "^"..pattern.."$"
-			if string.match(user,pattern) then
+			if string.match(user,pattern) and email.check(user) then
 				account = user
 				type = "email"
 			end
