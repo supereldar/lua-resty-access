@@ -69,62 +69,63 @@ end
 
 
 
-local function sendmail(to,otp,host,config)
-	local host = host:gsub('<', '&#x3C;')
+local function sendmail(to,otp,host,location,config)
+        local ok = true
+        local host = host:gsub('<', '&#x3C;')
         host = host:gsub('>', '&#x3E;')
-  	if not validemail(to) then return return_error("email validation error: ",to) end       
-	if not tonumber(otp) and string.len(otp) < 10 then return return_error("otp validation error: ",otp) end
-	if config["mode"] == "default" then
-		local body = {}
-		body['to']=to
-		body['otp']=otp
-		body['host']=host
-		local httpc = http.new()
-		local res, err = httpc:request_uri("https://mail.service.luarestyaccess.site:443/", {
-			method = "POST",
-			path = "/",
-			body = cjson.encode(body),
-			ssl_verify = true,
-          		headers = {
-              			["Host"] = "mail.service.luarestyaccess.site",
-				["luarestyaccesstoken"] = "623q4hR325t36VsCD3g567922IC0073T",
-				["Content-type"] = "application/json",
-				["Connection"] = "close"	
-          		}
-		})	
-		if err then return return_error("error send email: ", err) end
-		if res.status ~= 200 then return return_error("error send https request to mail.service.luarestyaccess.site: ", err) end
-		return true
-	end
+        if not validemail(to) then ok = return_error("email validation error: ",to) end
+        if not tonumber(otp) or string.len(otp) > 10 then ok = return_error("otp validation error: ",otp) end
+        local location = location
 
-	if config["mode"] == "smtp" then
-		local mailer, err = mail.new({
-			host = config['host'],
-			port = config['port'],
-			starttls = config['starttls'], 
-			username = config ['username'], 
-			password = config ['password'] 
-		})
-        	if err then return_error("mail.new error: ", err) end
+        if ok and config["mode"] == "default" then
+                local body = {}
+                body['to'] = to
+                body['otp'] = otp
+                body['host'] = host
+                body['location'] = location
+                local httpc = http.new()
+                local res, err = httpc:request_uri("https://mail.service.luarestyaccess.site:443/", {
+                        method = "POST",
+                        path = "/",
+                        body = cjson.encode(body),
+                        ssl_verify= true,
+                        headers = {
+                                ["Host"] = "mail.service.luarestyaccess.site",
+                                ["luarestyaccesstoken"] = "623q4hR325t36VsCD3g567922IC0073T",
+                                ["Content-type"] = "application/json",
+                                ["Connection"] = "close"
+                        }
+                })
+                if err then ok = return_error("error send email: ", err) end
+                if res.status ~= 200 then ok = return_error("error send https request to mail.service.luarestyaccess.site. Reposnse code is ", res.status) end
+        end
 
-		local text = "Click the link below to finish your login to"..host.."\r\nhttps://"..host.."?code="..otp.." \r\n"
-		text = text.."You can also Copy and paste the code below into the login screen\r\n"..otp.."\r\nThis code will expire in 1 minute."
-		local html = "Click the link below to finish your login to"..host.."<br><a href='https://"..host.."?code="..otp.."'>https://"..host.."?code="..otp.."</a><br>" 
-		html = html.."Copy and paste the code below into the login screen<br><h2>"..otp.."</h2><br>This code will expire in 1 minute."
+        if ok and config["mode"] == "smtp" then
+                local mailer, err = mail.new({
+                        host = config['host'],
+                        port = config['port'],
+                        starttls = config['starttls'],
+                        username = config ['username'],
+                        password = config ['password']
+                })
+                if err then ok = return_error("mail.new error: ", err) end
+                local url = "https://"..host..location
+                local uri = url.."?code="..otp
 
-	        local ok, err = mailer:send({
-			from = "lua-resty-access <"..config ['username']..">",
-			to = { to },
-			subject = "Login code for "..host.." ",
-			text = text,
-			html = html
-	        })
-        	if err then return return_error("mailer:send error: ", err) end
-		if ok then return true end
-	end
+                local text = "Click the link below to finish your login to "..host.."\r\n"..url.." \r\n \r\n"
+                text = text.."You can also Copy and paste the code below into the login screen \r\n"..otp.." \r\nThis code will expire in 1 minute."
+                local html = "Click the link below to finish your login to "..host.."<br><a href='"..uri.."'>"..uri.."</a><br><br>"
+                html = html.."You can also Copy and paste the code below into the login screen<br><h2>"..otp.."</h2>This code will expire in 1 minute."
+
+                local success, err = mailer:send({
+                        from = "lua-resty-access <"..config ['username']..">",
+                        to = { to },
+                        subject = "Login code for "..host.." ",
+                        text = text,
+                        html = html
+                })
+                if err then ok = return_error("mailer:send error: ", err) end
+        end
+
+        return ok
 end
-
-
-M.send = sendmail
-M.check = validemail
-return M
