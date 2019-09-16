@@ -36,7 +36,7 @@ http {
           #Or you can permit the whole domain. "*" - works as wildcard here.
           site:permitEmail({email = "*@snow.winter"})
           
-          #Launch Authentication module
+          #Launch module
           site:protect()
          }
        proxy_pass http://domain2.local;
