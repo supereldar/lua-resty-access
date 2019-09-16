@@ -33,7 +33,7 @@ function Response(obj)
 	if not otp then
 		body = body..'<input name="user" type="text" class="form-control" value="'..lastuser..'" style="text-align: center;" placeholder="type your username/email">'
 	else
-		body = body..'<input name="code" type="text" id="code" class="form-control" placeholder="000000" style="text-align: center;">'
+		body = body..'<input name="code" type="text" id="code" class="form-control" autocomplete="off" placeholder="000000" style="text-align: center;">'
 	end
 	body = body..'<div class="form-group"></div>'
         if not otp then 
