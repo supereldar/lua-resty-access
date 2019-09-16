@@ -104,7 +104,7 @@ end
 
 ngx.req.read_body()
 local post_args = ngx.req.get_post_args()
-local user, code = false
+local check, user, code = false
 if post_args['code'] then code = post_args['code'] end
 if post_args['user'] then user = post_args['user'] end
 if ngx.var.arg_code then code = ngx.var.arg_code end
@@ -156,7 +156,7 @@ if user then
 	authen_session:save()
 	
 	if type == "email" then 
-		if not email.send(account,authen_session.data.otp,ngx.req.get_headers()["Host"],email_config) then
+		if not email.send(account,authen_session.data.otp,ngx.req.get_headers()["Host"],ngx.var.uri,email_config) then
 			authen_session:destroy()
 			Response({lastuser=user, error = 'Problem with sending email'})
 		else 
