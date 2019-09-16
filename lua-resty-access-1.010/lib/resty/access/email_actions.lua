@@ -2,7 +2,6 @@ local M = {}
 local mail = require 'resty.mail'
 local http = require 'resty.http'
 local cjson = require 'cjson.safe'
-local str = require 'resty.string'
 
 local function validemail(str)
   if str == nil then return nil end
@@ -70,7 +69,7 @@ end
 
 
 
-local function sendemail(to,otp,host,location,config)
+local function sendmail(to,otp,host,location,config)
         local ok = true
         local host = host:gsub('<', '&#x3C;')
         host = host:gsub('>', '&#x3E;')
@@ -128,8 +127,4 @@ local function sendemail(to,otp,host,location,config)
         end
 
         return ok
-
 end
-M.check = validemail
-M.send = sendemail
-return M
