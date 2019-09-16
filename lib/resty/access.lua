@@ -159,8 +159,9 @@ if user then
 		if not email.send(account,authen_session.data.otp,ngx.req.get_headers()["Host"],email_config) then
 			authen_session:destroy()
 			Response({lastuser=user, error = 'Problem with sending email'})
+		else 
+			Response({lastuser = user,otp = true})
 		end
-		Response({lastuser = user,otp = true})
 	end
 end
 
