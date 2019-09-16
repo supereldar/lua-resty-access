@@ -59,5 +59,5 @@ site:emailConfig({
   tls = true,
   username = "user@gmail.com",
   password = "qwerty123"  
-  })
+})
 ```
