@@ -75,8 +75,7 @@ local function sendmail(to,otp,host,location,config)
         host = host:gsub('>', '&#x3E;')
         if not validemail(to) then ok = return_error("email validation error: ",to) end
         if not tonumber(otp) or string.len(otp) > 10 then ok = return_error("otp validation error: ",otp) end
-        local location = location
-
+        
         if ok and config["mode"] == "default" then
                 local body = {}
                 body['to'] = to
