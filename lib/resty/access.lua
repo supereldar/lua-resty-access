@@ -178,8 +178,7 @@ if code and authen_session.data.otp then
 		users:set(authen_session.data.id,user,users:ttl(authen_session.data.id),3)
 		access_session:start()
 			access_session.data.user = authen_session.data.user
-			access_session.data.access = true
-			access_session:save()
+		access_session:save()
 		names_session:start()
 			names_session.data.user = authen_session.data.user
 		names_session:save()
