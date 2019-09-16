@@ -28,7 +28,7 @@ http {
           local site = access:new()
           
           #Add users one by one who can access this location. To pass authentication provide "username".
-          site:permitUser({username="john", email="eldar.beybutov@gmail.com"})
+          site:permitUser({username="john", email="john@snow.winter"})
           
           #You can also permit a single email.
           site:permitEmail({email = "john@snow.winter"})
