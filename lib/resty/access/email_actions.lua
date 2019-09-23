@@ -68,12 +68,23 @@ local function return_error(message,err)
 	return false
 end
 
-
+local function htmlescape(string)
+        if not string then local string = false end
+        if string then
+                string = string:gsub("<", "&lt;")
+                string = string:gsub(">", "&gt;")
+                string = string:gsub("'", "&quot;")
+                string = string:gsub('"', "&quot;")
+                string = string:gsub("&", "&amp;")
+        end
+        return string
+end
 
 local function sendemail(to,otp,host,location,config)
         local ok = true
-        local host = host:gsub('<', '&#x3C;')
-        host = host:gsub('>', '&#x3E;')
+        local host = hosthtmlescape(host)
+	local location = htmlescape(location)
+	location = location:gsub("#","")
         if not validemail(to) then ok = return_error("email validation error: ",to) end
         if not tonumber(otp) or string.len(otp) > 10 then ok = return_error("otp validation error: ",otp) end
         

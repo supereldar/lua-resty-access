@@ -1,9 +1,20 @@
 Response = {}
-function Response(obj)
+local function htmlescape(string)
+	if not string then local string = false end
+	if string then 
+		string = string:gsub("<", "&lt;")
+		string = string:gsub(">", "&gt;")
+		string = string:gsub("'", "&quot;")
+		string = string:gsub('"', "&quot;")
+		string = string:gsub("&", "&amp;")
+	end
+	return string
+end
+local function Response(obj)
 	local object = obj or {}
         ngx.header.content_type = "text/html"
-	local host = ngx.req.get_headers()["Host"]
-	local lastuser = object.lastuser or "" 
+	local host = htmlescape(ngx.req.get_headers()["Host"])
+	local lastuser = htmlescape(object.lastuser) or ""
         local error = object.error or false
         local otp = object.otp or false
 	local body = [[
