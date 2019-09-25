@@ -177,7 +177,7 @@ if code and authen_session.data.otp then
 	end
 
 	if code == authen_session.data.otp then
-		users:set(authen_session.data.id,user,users:ttl(authen_session.data.id),3)
+		users:set(authen_session.data.id,user,authen_session.cookie.lifetime,3)
 		access_session:start()
 			access_session.data.user = authen_session.data.user
 		access_session:save()
@@ -187,7 +187,7 @@ if code and authen_session.data.otp then
 		authen_session:destroy()
 		ngx.redirect(location) 
 	else
-		users:set(authen_session.data.id,user,users:ttl(authen_session.data.id),attempts+1) 
+		users:set(authen_session.data.id,user,authen_session.cookie.lifetime,attempts+1) 
 		if attempts + 1 == 3 then
 			authen_session:destroy()
 			Response({lastuser = lastuser, error = "Get yourself a new one."})
