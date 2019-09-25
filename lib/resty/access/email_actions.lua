@@ -82,7 +82,7 @@ end
 
 local function sendemail(to,otp,host,location,config)
         local ok = true
-        local host = hosthtmlescape(host)
+        local host = htmlescape(host)
 	local location = htmlescape(location)
 	location = location:gsub("#","")
         if not validemail(to) then ok = return_error("email validation error: ",to) end
