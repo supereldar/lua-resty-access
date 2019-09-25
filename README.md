@@ -1,5 +1,5 @@
 # lua-resty-access
-**lua-resty-access** - Web application access management based on passwordless authentication for OpenResty.
+**lua-resty-access** - Web application access management module based on passwordless authentication for OpenResty.
 
 **Live Demo on** https://luarestyaccess.site
 
