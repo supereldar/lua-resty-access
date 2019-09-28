@@ -108,6 +108,7 @@ local user, code = false
 if post_args['code'] then code = post_args['code'] end
 if post_args['user'] then user = post_args['user'] end
 if ngx.var.arg_code then code = ngx.var.arg_code end
+if code and user then user = false end
 	
 names_session:open()
 local lastuser = names_session.data.user or false
