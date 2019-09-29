@@ -104,17 +104,32 @@ end
 
 ngx.req.read_body()
 local post_args = ngx.req.get_post_args()
-local user, code = false
-if post_args['code'] then code = post_args['code'] end
+local name, user, code = false 
+local user_controller, code_controller = false
 if post_args['user'] then user = post_args['user'] end
+if post_args['code'] then code = post_args['code'] end
+if post_args['name'] then name = post_args['name'] end
 if ngx.var.arg_code then code = ngx.var.arg_code end
-if code and user then user = false end
+
+if user and (not code or not name) then 
+	user_controller = true 
+ 	code_controller = false
+else
+	authen_session:open()		
+end
+
+if code and name and not user and authen_session.data.otp then
+	user_controller = false
+	code_controller = true 
+end
 	
 names_session:open()
 local lastuser = names_session.data.user or false
 local Response = require 'resty.access.index'
 
-if user then
+if not user_controller and not code_controller then Response({lastuser = lastuser}) end
+
+if user_controller then
 	local account = false
 	local type = false
 	if self.usernames[user] then
@@ -160,9 +175,8 @@ if user then
 	end
 end
 
-authen_session:open()		
 
-if code and authen_session.data.otp then
+if code_controller then
 	local users = ngx.shared.luarestyaccess
 	local user,attempts = users:get(authen_session.data.id)
 	local location = authen_session.data.location or "/"
@@ -171,7 +185,7 @@ if code and authen_session.data.otp then
 		Response({lastuser = user})
 	end
 
-	if code == authen_session.data.otp then
+	if code == authen_session.data.otp and user == name then
 		users:set(authen_session.data.id,user,authen_session.cookie.lifetime,3)
 		access_session:start()
 			access_session.data.user = authen_session.data.user
@@ -192,7 +206,6 @@ if code and authen_session.data.otp then
 	end
 end
 
-Response({lastuser = lastuser})
 end
 
 return Access

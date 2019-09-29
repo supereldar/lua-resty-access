@@ -131,7 +131,7 @@ local function sendemail(to,otp,host,location,config)
                 local success, err = mailer:send({
                         from = "lua-resty-access <"..config ['username']..">",
                         to = { to },
-                        subject = "Login code for "..host.." ",
+                        subject = "Login code for "..host.." is "..otp,
                         text = text,
                         html = html
                 })

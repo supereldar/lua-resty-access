@@ -50,7 +50,7 @@ local function Response(obj)
         if not otp then 
 		body = body..'<button onClick="javascript: document.getElementById(\'Form\').submit()" style="width: 100%" type="button" class="btn btn-primary">Let me in!</a>'
 	else
-		body = body..'<button onClick="javascript: document.getElementById(\'Form\').submit()" style="width: 100%" type="button" class="btn btn-primary">Access</button></form><br>'
+		body = body..'<button onClick="javascript: document.getElementById(\'Form\').submit()" style="width: 100%" type="button" class="btn btn-primary">Access</button><input name="name" type="hidden" value="'..lastuser..'"></form><br>'
 		body = body..'<form action="" method="post" id="Resend"><input name="user" type="hidden" value="'..lastuser..'">'
 		body = body..'<button onClick="javascript: document.getElementById(\'Resend\').submit();" style="width: 40%; display: inline; float: right;" type="button" class="btn btn-secondary btn-sm">Re-send Code</button></form>'
 		body = body..'<form action="" method="get" id="Back"><button onClick="javascript: document.getElementById(\'Back\').submit();" style="width: 40%; display: inline; float: left;" type="button" class="btn btn-secondary btn-sm">Back</button></form>'
