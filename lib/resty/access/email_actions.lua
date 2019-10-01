@@ -121,12 +121,12 @@ local function sendemail(to,otp,host,location,config)
                 })
                 if err then ok = return_error("mail.new error: ", err) end
                 local url = "https://"..host..location
-                local uri = url.."?code="..otp
+                local uri = url.."#code="..otp
 
-                local text = "Click the link below to finish your login to "..host.."\r\n"..url.." \r\n \r\n"
-                text = text.."You can also Copy and paste the code below into the login screen \r\n"..otp.." \r\nThis code will expire in 1 minute."
-                local html = "Click the link below to finish your login to "..host.."<br><a href='"..uri.."'>"..uri.."</a><br><br>"
-                html = html.."You can also Copy and paste the code below into the login screen<br><h2>"..otp.."</h2>This code will expire in 1 minute."
+--                local text = "Click the link below to finish your login to "..host.."\r\n"..url.." \r\n \r\nYou can also Copy"
+                local text = "Finish your login to "..host.."\r\nCopy and paste the code below into the login screen\r\n"..otp.." \r\nThis code will expire in 1 minute."
+--                local html = "Click the link below to finish your login to "..host.."<br><a href='"..uri.."'>"..uri.."</a><br><br>You can also"
+                local html = "Finish your login to "..host.."<br>Copy and paste the code below into the login screen<br><h2>"..otp.."</h2>This code will expire in 1 minute."
 
                 local success, err = mailer:send({
                         from = "lua-resty-access <"..config ['username']..">",

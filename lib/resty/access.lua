@@ -103,14 +103,15 @@ if access_session.present then
 end
 
 ngx.req.read_body()
-local post_args = ngx.req.get_post_args()
+local uri_args, err = ngx.req.get_uri_args()
+local post_args,err2  = ngx.req.get_post_args()
 local name, user, code = false 
 local user_controller, code_controller = false
 if post_args['user'] then user = post_args['user'] end
 if post_args['code'] then code = post_args['code'] end
 if post_args['name'] then name = post_args['name'] end
-if ngx.var.arg_code then code = ngx.var.arg_code end
-
+if  uri_args['code'] then code = uri_args['code'] end
+ngx.log(ngx.ERR, "code is",code)
 if user and (not code or not name) then 
 	user_controller = true 
  	code_controller = false
@@ -127,16 +128,16 @@ names_session:open()
 local lastuser = names_session.data.user or false
 local Response = require 'resty.access.index'
 
-if not user_controller and not code_controller then Response({lastuser = lastuser}) end
+if (not user_controller and not code_controller) or err or err2 then Response({lastuser = lastuser}) end
 
 if user_controller then
-	local account = false
-	local type = false
+	local account,type,found = false
 	if self.usernames[user] then
 		account = self.usernames[user]['account']
 		type = self.usernames[user]['type']
-	else
-	
+		found = true
+	end
+	if not found then 
 		for pattern in pairs(self.emails) do
 			pattern = pattern:gsub("%%","")
 			pattern = pattern:gsub("([%^%$%(%)%.%[%]%+%-%?])", "%%%1")
@@ -145,32 +146,31 @@ if user_controller then
 			if string.match(user,pattern) then
 				account = user
 				type = "email"
+				found = true
 			end
 		end
 	end 
-		
-	if not account then
-		Response({lastuser = lastuser,error = 'You are not welcome here'})
-	end	
-  
-	local digest = sha1:new()
-		digest:update(user)
-		digest:update(always_same_secret)
-		digest = str.to_hex(digest:final())
-	local users = ngx.shared.luarestyaccess
-	users:set(digest,user,authen_session.cookie.lifetime)
-	authen_session:start()
-		authen_session.data.otp = string.sub(string.format( "%d", tonumber(str.to_hex(random.bytes(6,true) or random.bytes(6)),16)),1,6)
-		authen_session.data.id = digest
-		authen_session.data.location = ngx.var.uri
-	authen_session:save()
+	if not found then Response({lastuser = lastuser,error = 'You are not welcome here'}) end
+	if found then	
+  		local digest = sha1:new()
+			digest:update(user)
+			digest:update(always_same_secret)
+			digest = str.to_hex(digest:final())
+		local users = ngx.shared.luarestyaccess
+		users:set(digest,user,authen_session.cookie.lifetime)
+		authen_session:start()
+			authen_session.data.otp = string.sub(string.format( "%d", tonumber(str.to_hex(random.bytes(6,true) or random.bytes(6)),16)),1,6)
+			authen_session.data.id = digest
+			authen_session.data.location = ngx.var.uri
+		authen_session:save()
 	
-	if type == "email" then 
-		if not email.send(account,authen_session.data.otp,ngx.req.get_headers()["Host"],ngx.var.uri,email_config) then
-			authen_session:destroy()
-			Response({lastuser=user, error = 'Problem with sending email'})
-		else 
-			Response({lastuser = user,otp = true})
+		if type == "email" then 
+			if not email.send(account,authen_session.data.otp,ngx.req.get_headers()["Host"],ngx.var.uri,email_config) then
+				authen_session:destroy()
+				Response({lastuser=user, error = 'Problem with sending email'})
+			else 
+				Response({lastuser = user,otp = true})
+			end
 		end
 	end
 end
@@ -183,29 +183,29 @@ if code_controller then
 	if attempts == nil then attempts = 0 end
 	if attempts >= 3 then
 		Response({lastuser = user})
-	end
-
-	if code == authen_session.data.otp and user == name then
-		users:set(authen_session.data.id,user,authen_session.cookie.lifetime,3)
-		access_session:start()
-			access_session.data.user = user
-		access_session:save()
-		names_session:start()
-			names_session.data.user = user
-		names_session:save()
-		authen_session:destroy()
-		ngx.redirect(location) 
 	else
-		users:set(authen_session.data.id,user,authen_session.cookie.lifetime,attempts+1) 
-		if attempts + 1 == 3 then
+		if code == authen_session.data.otp and user == name then
+			users:set(authen_session.data.id,user,authen_session.cookie.lifetime,3)
+			access_session:start()
+				access_session.data.user = user
+			access_session:save()
+			names_session:start()
+				names_session.data.user = user
+			names_session:save()
 			authen_session:destroy()
-			Response({lastuser = lastuser, error = "Get yourself a new one."})
+			ngx.redirect(location) 
 		else
-			Response({otp = true, error= "Code is wrong."})
-		end	
-	end
-end
+			users:set(authen_session.data.id,user,authen_session.cookie.lifetime,attempts+1) 
+			if attempts + 1 == 3 then
+				authen_session:destroy()
+				Response({lastuser = lastuser, error = "Get yourself a new one."})
+			else
+				Response({otp = true, error= "Code is wrong."})
+			end	
+		end
+	end	
 
+end
 end
 
 return Access
