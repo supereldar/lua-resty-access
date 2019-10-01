@@ -188,10 +188,10 @@ if code_controller then
 	if code == authen_session.data.otp and user == name then
 		users:set(authen_session.data.id,user,authen_session.cookie.lifetime,3)
 		access_session:start()
-			access_session.data.user = authen_session.data.user
+			access_session.data.user = user
 		access_session:save()
 		names_session:start()
-			names_session.data.user = authen_session.data.user
+			names_session.data.user = user
 		names_session:save()
 		authen_session:destroy()
 		ngx.redirect(location) 
