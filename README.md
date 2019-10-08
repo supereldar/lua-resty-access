@@ -22,7 +22,7 @@ http {
 #REQUIREMENT: resolver and ca certificate directives are needed for external communication.
         resolver 8.8.8.8;
         lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
-#REQUIREMENT: Call method protect of resty.access class using access_by_lua* to activate access managment.
+#REQUIREMENT: Call method Protect of resty.access object using access_by_lua* directive to activate access restriction.
         access_by_lua_block {
           local access = require'resty.access'
           local site = access:new()
