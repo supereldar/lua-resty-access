@@ -24,11 +24,12 @@ local function Response(obj)
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js#6470E394CBF6DAB6A91682CC8585059B"></script>
+<meta name="viewport" content="initial-scale=1" />
 </head>
 <body>
 <div class="container">
         <div class="row justify-content-center align-items-center" style="height:100vh">
-            <div class="col-4">
+            <div class="col-4" style="max-width: 100%">
                 <div class="card">
                     <div class="card-body">
 			<h4 style="text-align: center;">Access restricted</h4>]]
