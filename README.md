@@ -56,7 +56,7 @@ site:sessionConfig({access_secret = 623q4hR325t36VsCD3g567922IC0073T})
 ```
 If you want grant access to the whole domain specify it's name using cookie_domain key.
 ```shell
-site:sessionConfig({cookie_domain = ".domain.local"})
+site:sessionConfig({cookie_domain = "domain.local"})
 ```
 If you want to process emails through your own smtp server you can use emailConfig method.
 ```shell
