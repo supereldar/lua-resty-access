@@ -39,7 +39,7 @@ http {
           #Launch module
           site:protect()
          }
-       proxy_pass http://domain2.local;
+       proxy_pass http://app1.domain.local;
      }
    }
 }
@@ -49,7 +49,10 @@ If you want to change access time and persistence or cookie name prefix you can 
 ```shell
 site:sessionConfig({cookie_prefix = "luarestyaccess_", access_persistent = false , access_time = 3600})
 ```
-
+If you want grant access to the whole domain specify it's name using cookie_domain key.
+```shell
+site:sessionConfig({cookie_domain = ".domain.local"})
+```
 If you want to process emails through your own smtp server you can use emailConfig method.
 ```shell
 site:emailConfig({
