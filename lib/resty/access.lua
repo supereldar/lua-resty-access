@@ -16,8 +16,10 @@ end
 
 function Access:sessionConfig(options)
 	if options.cookie_prefix then self.cookie_prefix = options.cookie_prefix end
+	if options.cookie_domain then self.cookie_domain = options.cookie_domain end
 	if options.access_time then self.access_time = options.access_time end
 	if options.access_persistent then self.access_persistent = options.access_persistent end
+	if options.access_secret then self.access_secret = options.access_secret end
 	return true
 end
 
@@ -64,6 +66,8 @@ end
 local prefix_session_name = self.cookie_prefix
 local access_session_cookie_lifetime = self.access_time
 local access_session_cookie_persistent = self.access_persistent
+local access_session_cookie_domain = self.cookie_domain
+local access_session_secret = self.access_secret
 
 local always_same_secret = "623q4hR325t36VsCD3g567922IC0073T"
 local email = require "resty.access.email_actions"
@@ -73,22 +77,22 @@ local str = require "resty.string"
 local sha1 = require "resty.sha1"
 
 local access_session = require "resty.session".new()
-if session_secret then access_session.secret = session_secret end 
+if access_session_secret then access_session.secret = access_session_secret end 
 access_session.name = prefix_session_name .. "cookie"
 access_session.cookie.lifetime = access_session_cookie_lifetime
 access_session.cookie.persistent = access_session_cookie_persistent
+access_session.cookie.domain = access_session_cookie_domain
 access_session.cookie.renew = 0
 access_session.cookie.samesite = "Strict"
 
 local authen_session = require "resty.session".new()
-if session_secret then authen_session.secret = session_secret end
 authen_session.name = prefix_session_name .. "challenge"
 authen_session.cookie.renew = 0
-authen_session.cookie.lifetime = 60
+authen_session.cookie.lifetime = 120
 authen_session.cookie.samesite = "Strict"
 
 local names_session = require "resty.session".new()
-if session_secret then names_session.secret = always_same_secret end
+names_session.secret = always_same_secret
 names_session.name = prefix_session_name .. "data"
 names_session.cookie.lifetime = 10^9
 names_session.cookie.persistent = true
@@ -110,7 +114,8 @@ local user_controller, code_controller = false
 if post_args['user'] then user = post_args['user'] end
 if post_args['code'] then code = post_args['code'] end
 if post_args['name'] then name = post_args['name'] end
-
+if  uri_args['code'] then code = uri_args['code'] end
+ngx.log(ngx.ERR, "code is",code)
 if user and (not code or not name) then 
 	user_controller = true 
  	code_controller = false
