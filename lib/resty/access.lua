@@ -188,7 +188,7 @@ if code_controller then
 	if attempts >= 3 then
 		Response({lastuser = user})
 	else
-		if code == authen_session.data.otp and user == name then
+		if code == authen_session.data.otp and user == name and string.match(location,"%c") == nil then
 			users:set(authen_session.data.id,user,authen_session.cookie.lifetime,3)
 			access_session:start()
 				access_session.data.user = user
@@ -197,11 +197,8 @@ if code_controller then
 				names_session.data.user = user
 			names_session:save()
 			authen_session:destroy()
-                        if string.match(location,"%c") == nil then
-                                ngx.redirect(location)
-                        else
-                                ngx.exit(403)
-                        end		else
+                        ngx.redirect(location)
+		else
 			users:set(authen_session.data.id,user,authen_session.cookie.lifetime,attempts+1) 
 			if attempts + 1 == 3 then
 				authen_session:destroy()
