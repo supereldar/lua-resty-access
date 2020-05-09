@@ -115,7 +115,7 @@ if post_args['user'] then user = post_args['user'] end
 if post_args['code'] then code = post_args['code'] end
 if post_args['name'] then name = post_args['name'] end
 if  uri_args['code'] then code = uri_args['code'] end
-ngx.log(ngx.ERR, "code is",code)
+
 if user and (not code or not name) then 
 	user_controller = true 
  	code_controller = false
