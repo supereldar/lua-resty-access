@@ -11,30 +11,36 @@ $ opm get supereldar/lua-resty-access
 Your nginx configuration should look like this 
 ```nginx
 http {
+
 #REQUIREMENT: module require temporary storage, please setup luarestyaccess dictionary.
-  lua_shared_dict luarestyaccess 10m;
+
+    lua_shared_dict luarestyaccess 10m;
   
     server {
     listen 80;
     servername domain.local;
     
       location / {
+      
 #REQUIREMENT: resolver and ca certificate directives are needed for external communication.
+      
         resolver 8.8.8.8;
         lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+
 #REQUIREMENT: Call method Protect of resty.access object using access_by_lua* directive to activate access restriction.
+
         access_by_lua_block {
           local access = require'resty.access'
           local site = access:new()
-          
-          #Add users one by one who can access this location. To pass authentication provide "username".
-          site:permitUser({username="john", email="john@snow.winter"})
-          
-          #You can also permit a single email.
+           
+          #Add email addresses whose owners are permit to enter this server or location. Provide this email in auth form to get your code.
           site:permitEmail({email = "john@snow.winter"})
           
-          #Or you can permit the whole domain. "*" - works as wildcard here.
+          #Or you can permit the whole domain. "*" - works as wildcard here (works in other cases too, like "teamA.*@gmail.com").
           site:permitEmail({email = "*@snow.winter"})
+          
+          #If you want to prevent email enumeration you can setup username based authentication. Provide username in auth form to get code on related email address.
+          site:permitUser({username="john", email="john@snow.winter"})
           
           #Launch module
           site:protect()
