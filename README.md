@@ -41,6 +41,7 @@ http {
           #Launch module
           site:protect()
          }
+
        proxy_pass http://app1.domain.local;
      }
    }
