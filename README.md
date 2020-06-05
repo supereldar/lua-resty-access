@@ -13,22 +13,18 @@ Your nginx configuration should look like this
 http {
 
 #REQUIREMENT: module require temporary storage, please setup luarestyaccess dictionary.
-
     lua_shared_dict luarestyaccess 10m;
   
     server {
     listen 80;
     servername domain.local;
-    
-      location / {
+    location / {
       
 #REQUIREMENT: resolver and ca certificate directives are needed for external communication.
-      
         resolver 8.8.8.8;
         lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
 
 #REQUIREMENT: Call method Protect of resty.access object using access_by_lua* directive to activate access restriction.
-
         access_by_lua_block {
           local access = require'resty.access'
           local site = access:new()
