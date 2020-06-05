@@ -29,13 +29,13 @@ http {
           local access = require'resty.access'
           local site = access:new()
            
-          #Add email addresses whose owners are permit to enter this server or location. Provide this email in auth form to get your code.
+#Add email addresses whose owners are permit to enter this server or location. Provide this email in auth form to get your code.
           site:permitEmail({email = "john@snow.winter"})
           
-          #Or you can permit the whole domain. "*" - works as wildcard here (works in other cases too, like "teamA.*@gmail.com").
+#Or you can permit the whole domain. "*" - works as wildcard here (works in other cases too, like "teamA.*@gmail.com").
           site:permitEmail({email = "*@snow.winter"})
           
-          #If you want to prevent email enumeration you can setup username based authentication. Provide username in auth form to get code on related email address.
+#If you want to prevent email enumeration you can setup username based authentication. Provide username in auth form to get code on related email address.
           site:permitUser({username="john", email="john@snow.winter"})
           
           #Launch module
