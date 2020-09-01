@@ -1,8 +1,6 @@
 # lua-resty-access
 **lua-resty-access** - Web application access management module based on passwordless authentication for OpenResty.
 
-**Live Demo on** https://luarestyaccess.site
-
 ## Installation
 ```Shell
 $ opm get supereldar/lua-resty-access
