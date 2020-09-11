@@ -35,8 +35,16 @@ http {
           
 #If you want to prevent email enumeration you can setup username based authentication. Provide username in auth form to get code on related email address.
           site:permitUser({username="john", email="john@snow.winter"})
-          
-          #Launch module
+#Specify smtp server.
+          site:emailConfig({
+                mode = "smtp", 
+                host= "smtp.gmail.com", 
+                port = 587, 
+                tls = true,
+                username = "user@gmail.com",
+                password = "qwerty123"  
+           })
+#Launch module
           site:protect()
          }
 
@@ -61,12 +69,5 @@ site:sessionConfig({cookie_domain = "domain.local"})
 ```
 If you want to process emails through your own smtp server you can use emailConfig method.
 ```shell
-site:emailConfig({
-  mode = "smtp", 
-  host= "smtp.gmail.com", 
-  port = 587, 
-  tls = true,
-  username = "user@gmail.com",
-  password = "qwerty123"  
-})
+
 ```
