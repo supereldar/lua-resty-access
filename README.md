@@ -15,7 +15,7 @@ http {
   
     server {
     listen 80;
-    servername domain.local;
+    server_name domain.local;
     location / {
       
 #REQUIREMENT: resolver and ca certificate directives are needed for external communication.
