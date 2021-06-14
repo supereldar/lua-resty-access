@@ -17,6 +17,26 @@ local function Response(obj)
 	local lastuser = htmlescape(object.lastuser) or ""
         local error = object.error or false
         local otp = object.otp or false
+	local user_page = object.user_page or false
+	local user = object.user or false
+	if user_page == true then
+		local body = "Greetings, "..user
+		local handle = io.popen("sudo iptables -L | grep luarestyaccess: | grep "..ngx.var.remote_addr)
+		local result = handle:read("*a")
+		handle:close()
+		if result == nil or result == "" then
+			body = body.."<br>Your IP is not whitelisted</br>"
+			body = body..'<form action="" method="post"><button name="user_actions" value="iptables_add"/>Temporary whitelist my IP</button></form>'
+		else
+			body = body.."<br>Your IP is whitelisted</br>"
+			body = body..'<form action="" method="post"><button name="user_actions" value="iptables_del"/>Delete my IP from whitelist</button></form>'
+		end 
+		body = body..'<form action="" method="post"><button name="user_actions" value="logout"/>Terminate Session</button></form>'
+		ngx.say(body)
+		ngx.exit(200)
+		return true
+	end
+
 	local body = [[
 <!DOCTYPE html>
 <html>
@@ -69,4 +89,3 @@ local function Response(obj)
 	return true
 end
 return Response
-
