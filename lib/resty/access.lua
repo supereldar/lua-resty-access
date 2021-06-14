@@ -1,3 +1,4 @@
+
 Access = {}
 Access.__index = Access
 
@@ -75,6 +76,8 @@ local cjson = require 'cjson.safe'
 local random = require "resty.random"
 local str = require "resty.string"
 local sha1 = require "resty.sha1"
+local Response = require 'resty.access.index'
+local ngx_re = require "ngx.re"
 
 local access_session = require "resty.session".new()
 if access_session_secret then access_session.secret = access_session_secret end 
@@ -101,20 +104,56 @@ names_session.cookie.samesite = "Strict"
 access_session:open()
 
 if access_session.present then
+	if ngx.var.uri == "/luarestyaccess" then
+		ngx.req.read_body()
+		local post_args,err2  = ngx.req.get_post_args()
+                local handle = io.popen("sudo iptables -L | grep luarestyaccess: | grep "..ngx.var.remote_addr)
+                local result = handle:read("*a")
+                handle:close()
+		local iptables_empty = false
+                if result == nil or result == "" then iptables_empty = true end
+		if post_args['user_actions'] == "iptables_add" and iptables_empty == true then
+			os.execute('sudo iptables -A INPUT -m comment --comment "luarestyaccess:'..ngx.time()+self.access_time..'" -j ACCEPT -s '..ngx.var.remote_addr)
+			Response({user_page=true, user=access_session.data.user})
+		end
+		if post_args['user_actions'] == "iptables_del" then
+			handle = io.popen('sudo iptables -L INPUT --line-numbers | grep '..ngx.var.remote_addr..'| grep luarestyaccess:')
+			result = handle:read("*a")
+	                handle:close()
+			local lines = {}
+			for s in result:gmatch("[^\r\n]+") do
+ 	 			s = ngx_re.split(s," ")
+   				os.execute('sudo iptables -D INPUT '..s[1])
+                        end
+			Response({user_page=true, user=access_session.data.user})
+		end
+		if post_args['user_actions'] == "logout" then 
+			handle = io.popen('sudo iptables -L INPUT --line-numbers | grep '..ngx.var.remote_addr..'| grep luarestyaccess:')
+			result = handle:read("*a")
+	                handle:close()
+			local lines = {}
+			for s in result:gmatch("[^\r\n]+") do
+ 	 			s = ngx_re.split(s," ")
+   				os.execute('sudo iptables -D INPUT '..s[1])
+                        end
+			access_session:destroy() 
+			ngx.redirect('/')
+		else
+			Response({user_page=true, user=access_session.data.user})
+		end
+	end
 	access_session:hide()
 	names_session:hide()
 	return
 end
 
 ngx.req.read_body()
-local uri_args, err = ngx.req.get_uri_args()
 local post_args,err2  = ngx.req.get_post_args()
 local name, user, code = false 
 local user_controller, code_controller = false
 if post_args['user'] then user = post_args['user'] end
 if post_args['code'] then code = post_args['code'] end
 if post_args['name'] then name = post_args['name'] end
-if  uri_args['code'] then code = uri_args['code'] end
 
 if user and (not code or not name) then 
 	user_controller = true 
@@ -130,7 +169,6 @@ end
 	
 names_session:open()
 local lastuser = names_session.data.user or false
-local Response = require 'resty.access.index'
 
 if (not user_controller and not code_controller) or err or err2 then Response({lastuser = lastuser}) end
 
@@ -154,7 +192,10 @@ if user_controller then
 			end
 		end
 	end 
-	if not found then Response({lastuser = lastuser,error = 'You are not welcome here'}) end
+	if not found then 
+		ngx.log(ngx.ALERT,"user not exist '"..user.."' from "..ngx.var.remote_addr)
+		Response({lastuser = lastuser,error = 'You are not welcome here'}) 
+	end
 	if found then	
   		local digest = sha1:new()
 			digest:update(user)
@@ -189,6 +230,7 @@ if code_controller then
 		Response({lastuser = user})
 	else
 		if code == authen_session.data.otp and user == name and string.match(location,"%c") == nil then
+			ngx.log(ngx.ALERT,"success login, "..user.." from "..ngx.var.remote_addr)
 			users:set(authen_session.data.id,user,authen_session.cookie.lifetime,3)
 			access_session:start()
 				access_session.data.user = user
@@ -199,6 +241,7 @@ if code_controller then
 			authen_session:destroy()
                         ngx.redirect(location)
 		else
+			ngx.log(ngx.ALERT,"failed login, "..user.." from "..ngx.var.remote_addr)
 			users:set(authen_session.data.id,user,authen_session.cookie.lifetime,attempts+1) 
 			if attempts + 1 == 3 then
 				authen_session:destroy()
