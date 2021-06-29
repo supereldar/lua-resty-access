@@ -77,7 +77,6 @@ local random = require "resty.random"
 local str = require "resty.string"
 local sha1 = require "resty.sha1"
 local Response = require 'resty.access.index'
-local ngx_re = require "ngx.re"
 
 local access_session = require "resty.session".new()
 if access_session_secret then access_session.secret = access_session_secret end 
@@ -104,44 +103,6 @@ names_session.cookie.samesite = "Strict"
 access_session:open()
 
 if access_session.present then
-	if ngx.var.uri == "/luarestyaccess" then
-		ngx.req.read_body()
-		local post_args,err2  = ngx.req.get_post_args()
-                local handle = io.popen("sudo iptables -L | grep luarestyaccess: | grep "..ngx.var.remote_addr)
-                local result = handle:read("*a")
-                handle:close()
-		local iptables_empty = false
-                if result == nil or result == "" then iptables_empty = true end
-		if post_args['user_actions'] == "iptables_add" and iptables_empty == true then
-			os.execute('sudo iptables -A INPUT -m comment --comment "luarestyaccess:'..ngx.time()+self.access_time..'" -j ACCEPT -s '..ngx.var.remote_addr)
-			Response({user_page=true, user=access_session.data.user})
-		end
-		if post_args['user_actions'] == "iptables_del" then
-			handle = io.popen('sudo iptables -L INPUT --line-numbers | grep '..ngx.var.remote_addr..'| grep luarestyaccess:')
-			result = handle:read("*a")
-	                handle:close()
-			local lines = {}
-			for s in result:gmatch("[^\r\n]+") do
- 	 			s = ngx_re.split(s," ")
-   				os.execute('sudo iptables -D INPUT '..s[1])
-                        end
-			Response({user_page=true, user=access_session.data.user})
-		end
-		if post_args['user_actions'] == "logout" then 
-			handle = io.popen('sudo iptables -L INPUT --line-numbers | grep '..ngx.var.remote_addr..'| grep luarestyaccess:')
-			result = handle:read("*a")
-	                handle:close()
-			local lines = {}
-			for s in result:gmatch("[^\r\n]+") do
- 	 			s = ngx_re.split(s," ")
-   				os.execute('sudo iptables -D INPUT '..s[1])
-                        end
-			access_session:destroy() 
-			ngx.redirect('/')
-		else
-			Response({user_page=true, user=access_session.data.user})
-		end
-	end
 	access_session:hide()
 	names_session:hide()
 	return
