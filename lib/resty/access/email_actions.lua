@@ -80,7 +80,7 @@ local function htmlescape(string)
         return string
 end
 
-local function sendemail(to,otp,host,location,config)
+local function sendemail(to,otp,host,location,config,localization)
         local ok = true
         local host = htmlescape(host)
 	local location = htmlescape(location)
@@ -116,22 +116,24 @@ local function sendemail(to,otp,host,location,config)
                         host = config['host'],
                         port = config['port'],
                         starttls = config['starttls'],
-                        username = config ['username'],
-                        password = config ['password']
+                        username = config['username'],
+                        password = config['password'],
+                        domain = config['domain']
                 })
                 if err then ok = return_error("mail.new error: ", err) end
                 local url = "https://"..host..location
                 local uri = url.."#code="..otp
 
---                local text = "Click the link below to finish your login to "..host.."\r\n"..url.." \r\n \r\nYou can also Copy"
-                local text = "Finish your login to "..host.."\r\nCopy and paste the code below into the login screen\r\n"..otp.." \r\nThis code will expire in 1 minute."
---                local html = "Click the link below to finish your login to "..host.."<br><a href='"..uri.."'>"..uri.."</a><br><br>You can also"
-                local html = "Finish your login to "..host.."<br>Copy and paste the code below into the login screen<br><h2>"..otp.."</h2>This code will expire in 1 minute."
+                local text = string.format("%s %s\r\n%s\r\n %s \r\n%s", localization['mail1'], host, localization['mail2'], otp, localization['mail3'])
 
+                local html = string.format("%s %s<br>%s<br><h2>%s</h2> %s", localization['mail1'], host, localization['mail2'], otp, localization['mail3'])
+
+				local from_header = config['from']
+				if config['username'] then from_header = config['username'] end
                 local success, err = mailer:send({
-                        from = "lua-resty-access <"..config ['username']..">",
+                        from = "PTAF <"..from_header..">",
                         to = { to },
-                        subject = "Login code for "..host.." is "..otp,
+                        subject = string.format("%s %s : %s", localization['mail4'], host, otp),
                         text = text,
                         html = html
                 })

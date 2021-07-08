@@ -10,7 +10,7 @@ local function htmlescape(string)
 	end
 	return string
 end
-local function Response(obj)
+local function Response(obj, localization)
 	local object = obj or {}
         ngx.header.content_type = "text/html"
 	local host = htmlescape(ngx.req.get_headers()["Host"])
@@ -45,36 +45,37 @@ local function Response(obj)
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js#6470E394CBF6DAB6A91682CC8585059B"></script>
 <meta name="viewport" content="initial-scale=1" />
+<meta charset="UTF-8"> 
 </head>
 <body>
 <div class="container">
         <div class="row justify-content-center align-items-center" style="height:100vh">
             <div class="col-4" style="max-width: 100%">
                 <div class="card">
-                    <div class="card-body">
-			<h4 style="text-align: center;">Access restricted</h4>]]
+                    <div class="card-body">]]
+	body = string.format('%s<h4 style="text-align: center;">%s</h4>', body, localization['title1'])
 	if error then 
 		body = body..'<label><h4><font color="red">'..error..'</font></h4></label>' 
 	end
 	if not otp then 
-		body = body..'<label>To enter <b>'..host..'</b> please confirm your right to do so.</label><label>Get a login code sent to you:</label>'
+		body = string.format('%s<label>%s <b>%s</b> %s</label><label>%s</label>', body, localization['text1'], host, localization['text2'], localization['text3'])
 	else
-		body = body..'<label>A code for <b2>'..host..'</b2>  has been sent to you. </label><label>Enter it below to complete your login:</label>'
+		body = string.format('%s<label>%s <b2>%s</b2> %s </label><label>%s</label>', body, localization['text4'], host, localization['text5'], localization['text6'])
 	end
 	body = body..'<form action="" method="post" id="Form">\n'
 	if not otp then
-		body = body..'<input name="user" type="text" class="form-control" value="'..lastuser..'" style="text-align: center;" placeholder="type your username/email">'
+		body = string.format('%s<input name="user" type="text" class="form-control" value="%s" style="text-align: center;" placeholder="%s">', body, lastuser, localization['placeholder'])
 	else
-		body = body..'<input name="code" type="text" id="code" class="form-control" maxlength="6" autocomplete="off" placeholder="000000" style="text-align: center;">'
+		body = string.format('%s<input name="code" type="text" id="code" class="form-control" maxlength="6" autocomplete="off" placeholder="000000" style="text-align: center;">', body)
 	end
 	body = body..'<div class="form-group"></div>'
-        if not otp then 
-		body = body..'<button onClick="javascript: document.getElementById(\'Form\').submit()" style="width: 100%" type="button" class="btn btn-primary">Let me in!</a>'
+    if not otp then 
+		body = string.format('%s<button onClick="javascript: document.getElementById(\'Form\').submit()" style="width: 100%%" type="button" class="btn btn-primary">%s</a>', body, localization['btn1'])
 	else
-		body = body..'<button onClick="javascript: document.getElementById(\'Form\').submit()" style="width: 100%" type="button" class="btn btn-primary">Access</button><input name="name" type="hidden" value="'..lastuser..'"></form><br>'
-		body = body..'<form action="" method="post" id="Resend"><input name="user" type="hidden" value="'..lastuser..'">'
-		body = body..'<button onClick="javascript: document.getElementById(\'Resend\').submit();" style="width: 40%; display: inline; float: right;" type="button" class="btn btn-secondary btn-sm">Re-send Code</button></form>'
-		body = body..'<form action="" method="get" id="Back"><button onClick="javascript: document.getElementById(\'Back\').submit();" style="width: 40%; display: inline; float: left;" type="button" class="btn btn-secondary btn-sm">Back</button></form>'
+		body = string.format('%s<button onClick="javascript: document.getElementById(\'Form\').submit()" style="width: 100%%" type="button" class="btn btn-primary">%s</button><input name="name" type="hidden" value="%s"></form><br>', body, localization['btn2'], lastuser)
+		body = string.format('%s<form action="" method="post" id="Resend"><input name="user" type="hidden" value="%s">', body, lastuser)
+		body = string.format('%s<button onClick="javascript: document.getElementById(\'Resend\').submit();" style="width: 40%%; display: inline; float: right;" type="button" class="btn btn-secondary btn-sm">%s</button></form>', body, localization['btn3'])
+		body = string.format('%s<form action="" method="get" id="Back"><button onClick="javascript: document.getElementById(\'Back\').submit();" style="width: 40%%; display: inline; float: left;" type="button" class="btn btn-secondary btn-sm">%s</button></form>', body, localization['btn4'])
 	end
         body = body..[[</form>
                     </div>
