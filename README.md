@@ -47,7 +47,7 @@ http {
 #If your smtp server does not support TLS, use these parameters instead:
           site:emailConfig({
                 mode = "smtp", 
-                host= "mail.yourdomain.com",
+                host = "mail.yourdomain.com",
                 port = 25,
                 domain = "yourdomain.com",
                 from = "ptaf@yourdomain.com"
