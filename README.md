@@ -67,7 +67,8 @@ If you want grant access to the whole domain specify it's name using cookie_doma
 site:sessionConfig({cookie_domain = "domain.local"})
 ```
 If your smtp server does not support TLS, use these parameters instead:
- ```      site:emailConfig({
+ ```shell      
+        site:emailConfig({
                 mode = "smtp", 
                 host = "mail.yourdomain.com",
                 port = 25,
@@ -76,7 +77,8 @@ If your smtp server does not support TLS, use these parameters instead:
           })
 ```
 if you want customize webpage and email text you can use this template(localization support).
-```       site:localization({
+```shell       
+        site:localization({
                 title1 = "Access restricted",
                 text1 = "To enter",
                 text2 = "please confirm your right to do so.",
