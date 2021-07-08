@@ -131,7 +131,7 @@ local function sendemail(to,otp,host,location,config,localization)
 				local from_header = config['from']
 				if config['username'] then from_header = config['username'] end
                 local success, err = mailer:send({
-                        from = "PTAF <"..from_header..">",
+                        from = "lua-resty-access <"..from_header..">",
                         to = { to },
                         subject = string.format("%s %s : %s", localization['mail4'], host, otp),
                         text = text,
