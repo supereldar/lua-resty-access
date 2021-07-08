@@ -44,16 +44,39 @@ http {
                 username = "user@gmail.com",
                 password = "qwerty123"  
            })
-#If your smtp server does not support TLS, use these parameters instead:
-          site:emailConfig({
+#Launch module
+          site:protect()
+         }
+
+       proxy_pass http://app1.domain.local;
+     }
+   }
+}
+``` 
+## Optional configuration
+If you want to change access time, authentication code wait time, persistence or cookie name prefix you can use sessionConfig method.
+```shell
+site:sessionConfig({cookie_prefix = "luarestyaccess_", access_persistent = false , access_time = 3600, auth_cookie_lifetime = 60})
+```
+If you want to keep users authenticated after configuration reload, specify static secret using access_secret key.
+```shell
+site:sessionConfig({access_secret = "623q4hR325t36VsCD3g567922IC0073T"})
+```
+If you want grant access to the whole domain specify it's name using cookie_domain key.
+```shell
+site:sessionConfig({cookie_domain = "domain.local"})
+```
+If your smtp server does not support TLS, use these parameters instead:
+ ```      site:emailConfig({
                 mode = "smtp", 
                 host = "mail.yourdomain.com",
                 port = 25,
                 domain = "yourdomain.com",
                 from = "ptaf@yourdomain.com"
           })
-#Customize webpage and email text (you can use html tags here).
-          site:localization({
+```
+if you want customize webpage and email text you can use this template(localization support).
+```       site:localization({
                 title1 = "Access restricted",
                 text1 = "To enter",
                 text2 = "please confirm your right to do so.",
@@ -75,26 +98,4 @@ http {
                 err3 = "Get yourself a new one.",
                 err4 = "Code is wrong."
           })
-#Launch module
-          site:protect()
-         }
-
-       proxy_pass http://app1.domain.local;
-     }
-   }
-}
-``` 
-## Optional configuration
-If you want to change access time, authentication code wait time, persistence or cookie name prefix you can use sessionConfig method.
-```shell
-site:sessionConfig({cookie_prefix = "luarestyaccess_", access_persistent = false , access_time = 3600, auth_cookie_lifetime = 60})
-```
-If you want to keep users authenticated after configuration reload, specify static secret using access_secret key.
-
-```shell
-site:sessionConfig({access_secret = "623q4hR325t36VsCD3g567922IC0073T"})
-```
-If you want grant access to the whole domain specify it's name using cookie_domain key.
-```shell
-site:sessionConfig({cookie_domain = "domain.local"})
-```
+ ```
