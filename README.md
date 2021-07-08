@@ -45,36 +45,36 @@ http {
                 password = "qwerty123"  
            })
 #If your smtp server does not support TLS, use these parameters instead:
-		  site:emailConfig({
-				mode = "smtp", 
-				host= "mail.yourdomain.com",
-				port = 25,
-				domain = "yourdomain.com",
-				from = "ptaf@yourdomain.com"
-		  })
+          site:emailConfig({
+                mode = "smtp", 
+                host= "mail.yourdomain.com",
+                port = 25,
+                domain = "yourdomain.com",
+                from = "ptaf@yourdomain.com"
+          })
 #Customize webpage and email text (you can use html tags here).
-		  site:localization({
-		 	 title1 = "Access restricted",
-		 	 text1 = "To enter",
-		 	 text2 = "please confirm your right to do so.",
-		 	 text3 = "Get a login code sent to you:",
-		 	 text4 = "A code for",
-		 	 text5 = "has been sent to you.",
-		 	 text6 = "Enter it below to complete your login:",
-		 	 placeholder = "type your username/email",
-		 	 btn1 = "Let me in!",
-		 	 btn2 = "Access",
-		 	 btn3 = "Re-send Code",
-		 	 btn4 = "Back",
-		 	 mail1 = "Finish your login to ",
-		 	 mail2 = "Copy and paste the code below into the login screen",
-		 	 mail3 = "This code will expire in 1 minute.",
-		 	 mail4 = "Login code for",
-		 	 err1 = "You are not welcome here",
-		 	 err2 = "Problem with sending email",
-		 	 err3 = "Get yourself a new one.",
-		 	 err4 = "Code is wrong."
-		  })
+          site:localization({
+                title1 = "Access restricted",
+                text1 = "To enter",
+                text2 = "please confirm your right to do so.",
+                text3 = "Get a login code sent to you:",
+                text4 = "A code for",
+                text5 = "has been sent to you.",
+                text6 = "Enter it below to complete your login:",
+                placeholder = "type your username/email",
+                btn1 = "Let me in!",
+                btn2 = "Access",
+                btn3 = "Re-send Code",
+                btn4 = "Back",
+                mail1 = "Finish your login to ",
+                mail2 = "Copy and paste the code below into the login screen",
+                mail3 = "This code will expire in 1 minute.",
+                mail4 = "Login code for",
+                err1 = "You are not welcome here",
+                err2 = "Problem with sending email",
+                err3 = "Get yourself a new one.",
+                err4 = "Code is wrong."
+          })
 #Launch module
           site:protect()
          }
