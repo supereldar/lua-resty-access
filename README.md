@@ -5,6 +5,7 @@
 ```Shell
 $ opm get supereldar/lua-resty-access
 ```
+or clone this repo to your lua library
 ## Requirements and Quick Start example
 Your nginx configuration should look like this 
 ```nginx
